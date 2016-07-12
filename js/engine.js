@@ -31,6 +31,38 @@ var world = {
             },
             geometry: 'new THREE.SphereGeometry(1)',
             material: 'new THREE.MeshLambertMaterial({color: 0xff00ff, reflectivity: 1, emissive: 0x000000})',
+        },
+        {
+            name: 'venus',
+            orbit: 'none',
+            position: {
+                x: 5,
+                y: 0,
+                z: -10
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            geometry: 'new THREE.SphereGeometry(1)',
+            material: 'new THREE.MeshLambertMaterial({color: 0x0000ff, reflectivity: 1, emissive: 0x000000})',
+        },
+        {
+            name: 'earth',
+            orbit: 'none',
+            position: {
+                x: -20,
+                y: 0,
+                z: 15
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            geometry: 'new THREE.SphereGeometry(1)',
+            material: 'new THREE.MeshLambertMaterial({color: 0x00ff00, reflectivity: 1, emissive: 0x000000})',
         }
     ],
     //list every player's socketID, in order
