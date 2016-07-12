@@ -2,10 +2,16 @@ const app = require('express')(),
       http = require('http').Server(app),
       io = require('socket.io')(http),
       
+      os = require('os'),
+      
       readline = require('readline'),
       rl = readline.createInterface(process.stdin, process.stdout);
 
-var engine = require('./js/engine.js');
+var engine = require('./js/engine.js'),
+    
+    networkInterfaces = os.networkInterface();
+
+console.log(networkInterfaces);
 
 
 
