@@ -262,17 +262,11 @@ function camSet() {
     camera.lookAt(view.focus.position);
 }
 
-/*function statLog() {
-    document.getElementById('z_rot').innerHTML = view.z_rot;
-    document.getElementById('y_rot').innerHTML = view.y_rot;
-}*/
-
 function render() {
     requestAnimationFrame(render);
     
     
     checkKeys();
     camSet();
-    //statLog();
     renderer.render(scene, camera);
 }

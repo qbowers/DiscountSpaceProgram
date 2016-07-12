@@ -1,39 +1,3 @@
-/*{
-    name: 'sun',
-    orbit: {
-        init: function() {
-            
-        },
-        point_build: function() {
-            
-        },
-        apoapsis: {
-            x: '',
-            y: '',
-            z: ''
-        },
-        periapsis: {
-            x: '',
-            y: '',
-            z: ''
-        },
-        B_radius: 5,
-        points : []
-        
-    },
-    position: {
-        x: 0,
-        y: 0,
-        z: 0
-    },
-    rotation: {
-        x: 0,
-        y: 0,
-        z: 0
-    },
-    radius: 1,
-    material: 'new THREE.MeshBasicMaterial({color: 0xffff11})',
-},*/
 function Body(data) {
     this.name = data.name;
     
@@ -51,7 +15,6 @@ function Body(data) {
     
     this.radius = data.radius;
     this.material = data.material;
-    
 }
 
 var c_bodies = [
