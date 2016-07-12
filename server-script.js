@@ -70,7 +70,7 @@ io.on('connection', function(socket){
     
     socket.on('hist', function(hist){
         if (hist === false) {
-            socket.emit('world', engine.world.c_bodies);
+            socket.emit('world', engine.c_bodies);
         }
         
         socket.emit('START');
@@ -98,8 +98,8 @@ rl.on('line', function(line){
     var port = Number(line);
     var ip_address ='0.0.0.0';
     http.listen(port, ip_address, function(){
-        console.log('------Server Created------');
-        console.log('IP-host: ' + address);
+        console.log('----Server Created----');
+        console.log('IP-host: ' +  address);
         console.log('server-port: ' + port);
     });
     

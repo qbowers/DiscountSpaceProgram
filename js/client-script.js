@@ -34,9 +34,9 @@ scene.add(light);
 
 
 /*----LOCAL VARIABLES----*/
-var keyState = {};
+var keyState = {},
+    bodies = [];
 
-var bodies = [];
 
 var curser = {
     reset: false,

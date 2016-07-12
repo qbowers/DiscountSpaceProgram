@@ -27,12 +27,13 @@
     <!-- LIB REFERENCES -->
     <script src='/socket.io/socket.io.js'></script>
     <script src='js/libs/three.min.js'></script>
-    <!--<script src='js/libs/stl_loader.js'></script>
+    <script src='js/libs/stl_loader.js'></script>
     <!-- LIB REFERENCES -->
     
     
     
     <script src='js/client-script.js'></script>
+    
     <script>
         
         var socket = io();
@@ -64,7 +65,7 @@
                 bodies[i] = {
                     name: c_bodies.name,
                     orbit: c_bodies.orbit,
-                    geometry: eval(c_bodies[i].geometry),
+                    geometry: new THREE.SphereGeometry(c_bodies[i].radius),
                     material: eval(c_bodies[i].material)
                 };
                 
@@ -72,8 +73,9 @@
                 
                 scene.add(bodies[i].mesh);
                 
-                p_set(bodies[i].mesh, c_bodies[i].position);         r_set(bodies[i].mesh, c_bodies[i].position);
-
+                p_set(bodies[i].mesh, c_bodies[i].position);
+                r_set(bodies[i].mesh, c_bodies[i].position);
+                
             };
         });
         
