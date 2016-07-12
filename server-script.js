@@ -8,10 +8,9 @@ const app = require('express')(),
       rl = readline.createInterface(process.stdin, process.stdout);
 
 var engine = require('./js/engine.js'),
-    
-    networkInterfaces = os.networkInterface();
+    ifaces = os.networkInterfaces(),
+    address = ifaces['Wi-Fi'][1].address;
 
-console.log(networkInterfaces);
 
 
 
@@ -100,7 +99,7 @@ rl.on('line', function(line){
     var ip_address ='0.0.0.0';
     http.listen(port, ip_address, function(){
         console.log('------Server Created------');
-        console.log('IP-host: ' + ip_address);
+        console.log('IP-host: ' + address);
         console.log('server-port: ' + port);
     });
     
