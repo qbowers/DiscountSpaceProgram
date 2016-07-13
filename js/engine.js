@@ -15,6 +15,35 @@ function Body(data) {
     
     this.radius = data.radius;
     this.material = data.material;
+    
+    
+    
+    
+    this.orbit = {
+        apoapsis: 3,
+        periapsis: 2,
+        
+        midpoint: (this.orbit.apoapsis - this.orbit.periapsis) / 2,
+        
+        a_rad: this.orbit.apoapsis + this.radius - this.orbit.midpoint,
+        b_rad: 6,
+        
+        
+        /*
+            x = +-   (this.orbit.a_rad * this.orbit.b_rad / Math.sqrt(this.orbit.b_rad^2 + this.orbit.a_rad^2(Math.tan([[[angle]]]))))
+        */
+        
+        
+        
+        init: function() {
+            
+        }
+        
+    };
+    
+    
+    
+    
 }
 
 var c_bodies = [

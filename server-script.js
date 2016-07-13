@@ -72,7 +72,6 @@ io.on('connection', function(socket){
         if (hist === false) {
             socket.emit('world', engine.c_bodies);
         }
-        
         socket.emit('START');
     });
     
