@@ -24,9 +24,9 @@ function Body(data) {
         periapsis: 2,
         
         
+        midpoint: (this.orbit.apoapsis - this.orbit.periapsis) / 2,
         a_rad: this.orbit.apoapsis + this.radius - this.orbit.midpoint,
         b_rad: 6,
-        
         
         
         
