@@ -23,25 +23,35 @@ function Body(data) {
         apoapsis: 3,
         periapsis: 2,
         
-        midpoint: (this.orbit.apoapsis - this.orbit.periapsis) / 2,
         
         a_rad: this.orbit.apoapsis + this.radius - this.orbit.midpoint,
         b_rad: 6,
         
         
-        /*
-            x = +-   (this.orbit.a_rad * this.orbit.b_rad / Math.sqrt(this.orbit.b_rad^2 + this.orbit.a_rad^2(Math.tan([[[angle]]]))))
-        */
         
         
         
-        init: function() {
+        init: function(segments) {
+            
+            var points = [];
+            
+            for (var i = 0, i < segments) {
+                
+                var angle = 2 * i * Math.PI / segments,
+                    
+                    x = +- (this.orbit.a_rad * this.orbit.b_rad / Math.sqrt(Math.pow(this.orbit.b_rad, 2) + (Math.pow(this.orbit.a_rad, 2) * (Math.tan(angle)))));
+                
+                if (angle < Math.PI / -2 || angle > Math.PI / 2) {x *= -1}
+                
+                var y = x * Math.tan(angle);
+                points[i] = {x: x, z: y};
+            }
+            
+            this.orbit.points = points;
             
         }
         
     };
-    
-    
     
     
 }
@@ -62,24 +72,18 @@ var c_bodies = [
         material: 'new THREE.MeshLambertMaterial({color: 0x0000ff, reflectivity: 1})'
     })
 ],
+    
     p_list = [],
     players = {
         socketID: {
-            alias: '',
-            ships: [
-                {
-                    name: '',
-                    position: '',
-                    orbit: '',
-                    geometry: '',
-                    color: ''
-                }
-            ]
+            alias: ''
         }
     },
+    
     g_rules = {
         move_speed: 'etc'
     };
+
 
 
 /*---- Module Exports ----*/
