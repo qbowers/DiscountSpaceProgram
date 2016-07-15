@@ -67,6 +67,11 @@
                 p_set(bodies[i].mesh, c_bodies[i].position);
                 r_set(bodies[i].mesh, c_bodies[i].position);
                 
+                
+                console.log('apoapsis: ' + c_bodies[i].orbit.apoapsis);
+                c_bodies[i].init('things');
+                //c_bodies[i].orbit.init();
+                
             };
         });
         

@@ -125,11 +125,28 @@ function r_set(t_obj, l_obj) {
     t_obj.rotation.y = l_obj.y;
     t_obj.rotation.z = l_obj.z;
 }
-
 function p_set(t_obj, l_obj) {
     t_obj.position.x = l_obj.x;
     t_obj.position.y = l_obj.y;
     t_obj.position.z = l_obj.z;
+}
+
+function point_create(segments, body) {
+    var points = [];
+    
+    for (var i = 0, i < segments) {
+
+        var angle = 2 * i * Math.PI / segments,
+            x = +- (body.orbit.a_rad * body.orbit.b_rad / Math.sqrt(Math.pow(body.orbit.b_rad, 2) + (Math.pow(body.orbit.a_rad, 2) * (Math.tan(angle)))));
+        
+        if (angle < Math.PI / -2 || angle > Math.PI / 2) {x *= -1}
+        
+        var y = x * Math.tan(angle);
+        
+        points[i] = {x: x, z: y};
+    }
+            
+    orbit.points = points;
 }
 /*----HELPERS----*/
 
