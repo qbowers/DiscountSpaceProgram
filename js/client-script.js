@@ -35,7 +35,7 @@ scene.add(light);
 
 /*----LOCAL VARIABLES----*/
 var keyState = {},
-    bodies = [];
+    c_bodies = {};
 
 
 var curser = {
@@ -71,7 +71,7 @@ document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
 window.addEventListener('resize', windowResize, false);
 document.addEventListener('mousemove', mouseMove, false);
-
+document.addEventListener('wheel', wheel, false);
 
 function windowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -114,6 +114,11 @@ function mouseMove() {
         }
     }
 }
+
+function wheel() {
+    view.length += event.wheelDelta / -120;
+    camUpdate();
+}
 /*----EVENTS----*/
 
 
@@ -130,24 +135,52 @@ function p_set(t_obj, l_obj) {
     t_obj.position.y = l_obj.y;
     t_obj.position.z = l_obj.z;
 }
-
-function point_create(segments, body) {
-    var points = [];
+function Body(data) {
+    this.radius = data.radius;
+    this.geometry = new THREE.SphereGeometry(data.radius);
     
-    for (var i = 0, i < segments) {
-
-        var angle = 2 * i * Math.PI / segments,
-            x = +- (body.orbit.a_rad * body.orbit.b_rad / Math.sqrt(Math.pow(body.orbit.b_rad, 2) + (Math.pow(body.orbit.a_rad, 2) * (Math.tan(angle)))));
-        
-        if (angle < Math.PI / -2 || angle > Math.PI / 2) {x *= -1}
-        
-        var y = x * Math.tan(angle);
-        
-        points[i] = {x: x, z: y};
-    }
-            
-    orbit.points = points;
+    this.material = data.material;
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    scene.add(this.mesh);
 }
+
+function orbit_build(segments, body) {
+    var focus = c_bodies[body].orbit.focus,
+        p_rad = c_bodies[focus].radius,
+        apoapse = c_bodies[body].orbit.apoapse + p_rad,
+        periapse = c_bodies[body].orbit.periapse + p_rad;
+    
+    
+    
+    var a = (apoapse + periapse) / 2,
+        c = a - periapse,
+        b = Math.sqrt(Math.pow(a, 2) - Math.pow(c, 2)),
+        
+        geometry = new THREE.Geometry(),
+        material = new THREE.LineBasicMaterial({color: 0xffffff}),
+        pointList = [];
+    
+    for (var i = 0; i < segments; i++) {
+        var angle = 2 * i * Math.PI / segments,
+            x = (a * b / Math.sqrt(Math.pow(b, 2) + (Math.pow(a, 2) * Math.pow(Math.tan(angle), 2))));
+        
+        if (i <= segments / 4 || i > 3 * segments / 4) {x *= -1}
+        var y = x * Math.tan(angle);
+        x += c;
+        pointList.push([x, y]);
+    }
+    //just creating the ellips
+    for (var i = 0; i < pointList.length; i++) {
+        geometry.vertices.push(new THREE.Vector3(pointList[i][0],0,pointList[i][1]));
+    }
+    geometry.vertices.push(new THREE.Vector3(pointList[0][0],0,pointList[0][1]));
+    
+    c_bodies[body].orbit.mesh = new THREE.Line(geometry, material);
+    p_set(c_bodies[body].orbit.mesh, c_bodies[focus].mesh.position);
+    
+    scene.add(c_bodies[body].orbit.mesh);
+}
+
 /*----HELPERS----*/
 
 
@@ -158,37 +191,19 @@ function point_create(segments, body) {
 
 
 function CREATE() {
-    
-    var line = {
-        x: {
-            geometry: new THREE.Geometry(),
-            material: new THREE.LineBasicMaterial({color: 0xff0000})
-        },
-        y: {
-            geometry: new THREE.Geometry(),
-            material: new THREE.LineBasicMaterial({color: 0x00ff00})
-        },
-        z: {
-            geometry: new THREE.Geometry(),
-            material: new THREE.LineBasicMaterial({color: 0x0000ff})
-        }
+    function OriginLine(data) {
+        this.geometry = new THREE.Geometry();
+        this.material = new THREE.LineBasicMaterial({color: data.color});
+        this.geometry.vertices.push(new THREE.Vector3(0,0,0));
+        this.geometry.vertices.push(new THREE.Vector3(data.point[0], data.point[1], data.point[2]));
+        this.mesh = new THREE.Line(this.geometry, this.material);
+        scene.add(this.mesh);
     }
-    line.x.geometry.vertices.push(new THREE.Vector3(0,0,0));
-    line.y.geometry.vertices.push(new THREE.Vector3(0,0,0));
-    line.z.geometry.vertices.push(new THREE.Vector3(0,0,0));
-    
-    line.x.geometry.vertices.push(new THREE.Vector3(10,0,0));
-    line.y.geometry.vertices.push(new THREE.Vector3(0,10,0));
-    line.z.geometry.vertices.push(new THREE.Vector3(0,0,10));
-    
-    line.x.mesh = new THREE.Line(line.x.geometry, line.x.material);
-    line.y.mesh = new THREE.Line(line.y.geometry, line.y.material);
-    line.z.mesh = new THREE.Line(line.z.geometry, line.z.material);
-    
-    
-    scene.add(line.x.mesh);
-    scene.add(line.y.mesh);
-    scene.add(line.z.mesh);
+    var line = {
+        x: new OriginLine({color: 0xff0000, point: [10,0,0]}),
+        y: new OriginLine({color: 0x00ff00, point: [0,10,0]}),
+        z: new OriginLine({color: 0x0000ff, point: [0,0,10]})
+    };
     
 }
 

@@ -27,51 +27,42 @@
     
     <script>
         
-        var socket = io();
-        
-        var hist = false;
+        var socket = io(),
+            hist = false;
         
         socket.on('connect', function(){
             localId = '/#' + socket.id;
             console.log('local id: ' + localId);
-            
             if (hist === false) {
                 socket.emit('hist', hist);
                 hist = true;
             }
-            
-            
         });
         
         socket.on('START', function(){
-            view.focus = bodies[0].mesh;
+            view.focus = c_bodies['sol'].mesh;
             camUpdate();
-            CREATE();
             render();
+            CREATE();
         });
         
         
-        socket.on('world', function(c_bodies){
-            for (var i = 0; i < c_bodies.length; i++) {
-                bodies[i] = {
-                    name: c_bodies.name,
-                    orbit: c_bodies.orbit,
-                    geometry: new THREE.SphereGeometry(c_bodies[i].radius),
-                    material: eval(c_bodies[i].material)
-                };
+        socket.on('world', function(s_bodies){
+            for (var i = 0; i < s_bodies.length; i++) {
+                var body = s_bodies[i].name;
+                c_bodies[body] = new Body({
+                    radius: s_bodies[i].radius,
+                    material: eval(s_bodies[i].material)
+                });
+                         
+                c_bodies[body].orbit = s_bodies[i].orbit;
                 
-                bodies[i].mesh = new THREE.Mesh(bodies[i].geometry, bodies[i].material);
+                p_set(c_bodies[body].mesh, s_bodies[i].position);
+                r_set(c_bodies[body].mesh, s_bodies[i].position);
                 
-                scene.add(bodies[i].mesh);
-                
-                p_set(bodies[i].mesh, c_bodies[i].position);
-                r_set(bodies[i].mesh, c_bodies[i].position);
-                
-                
-                console.log('apoapsis: ' + c_bodies[i].orbit.apoapsis);
-                c_bodies[i].init('things');
-                //c_bodies[i].orbit.init();
-                
+                if (c_bodies[body].orbit != 'none') {
+                    orbit_build(200, body);
+                }
             };
         });
         

@@ -19,37 +19,41 @@ function Body(data) {
     
     
     
-    this.orbit = {
-        apoapsis: 3,
-        periapsis: 2,
-        
-        b_rad: 6,
-        
-        
-    };
-    
-    
-    //this.orbit.midpoint = (this.orbit.apoapsis - this.orbit.periapsis) / 2;
-    //this.orbit.a_rad = this.orbit.apoapsis + this.radius - this.orbit.midpoint;
-    
-    
-    
+    this.orbit = data.orbit;
 }
 
-var c_bodies = [
+var s_bodies = [
     new Body({
-        name: 'sun',
+        name: 'sol',
         position: [0,0,0],
         rotation: [0,0,0],
-        radius: 1,
-        material: 'new THREE.MeshBasicMaterial({color: 0xffff11})'
+        radius: 5,
+        material: 'new THREE.MeshBasicMaterial({color: 0xffff11})',
+        orbit: 'none'
     }),
     new Body({
         name: 'terra',
-        position: [20,0,0],
+        position: [24,0,0],
         rotation: [0,0,0],
         radius: 1,
-        material: 'new THREE.MeshLambertMaterial({color: 0x0000ff, reflectivity: 1})'
+        material: 'new THREE.MeshLambertMaterial({color: 0x0000ff, reflectivity: 1})',
+        orbit: {
+            focus: 'sol',
+            apoapse: 19,
+            periapse: 10
+        }
+    }),
+    new Body({
+        name: 'duna',
+        position: [-9,0,0],
+        rotation: [0,0,0],
+        radius: 1,
+        material: 'new THREE.MeshLambertMaterial({color: 0x0000ff, reflectivity: 1})',
+        orbit: {
+            focus: 'sol',
+            apoapse: 19,
+            periapse: 4
+        }
     })
 ],
     
@@ -67,8 +71,7 @@ var c_bodies = [
 
 
 /*---- Module Exports ----*/
-//module.exports.[variable/function] = [variable/function];
-module.exports.c_bodies = c_bodies;
+module.exports.s_bodies = s_bodies;
 module.exports.p_list = [];
 module.exports.players = players;
 module.exports.g_rules = g_rules;

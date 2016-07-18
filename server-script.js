@@ -70,7 +70,7 @@ io.on('connection', function(socket){
     
     socket.on('hist', function(hist){
         if (hist === false) {
-            socket.emit('world', engine.c_bodies);
+            socket.emit('world', engine.s_bodies);
         }
         socket.emit('START');
     });
