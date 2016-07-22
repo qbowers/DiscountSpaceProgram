@@ -1,33 +1,11 @@
-/*----Load Protocol----
-loader.load('file name/path', function (geometry) {
-    //do anything with geometry you like
-    //can go so far as to add the object to the scene
-    //can also just return the geometry and deal with it externally
-    
-    var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    var base = new THREE.Mesh( geometry, material );
-	base.position.set(2.7, 0, -2);
-    base.rotation.set(Math.PI / -2, 0, 0);
-	base.scale.set( 0.1, 0.1, 0.1);
-    scene.add(base);
-});
-----Load protocol----*/
-
-
 /*----SETUP----*/
 var scene = new THREE.Scene(),
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000),
-    
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.000001, 1000),
     loader = new THREE.STLLoader(),
-    
     light = new THREE.PointLight( 0xffffff, 2, 100 ),
-    
     renderer = new THREE.WebGLRenderer(/*{alpha: true}*/);
-
-
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
 light.position.set(0, 0, 0);
 scene.add(light);
 /*----SETUP----*/
@@ -35,8 +13,8 @@ scene.add(light);
 
 /*----LOCAL VARIABLES----*/
 var keyState = {},
-    c_bodies = {};
-
+    c_bodies = {},
+    g_rules;
 
 var curser = {
     reset: false,
@@ -47,20 +25,17 @@ var curser = {
         y: 0
     }
 };
+
 var view = {
     focus: '',
-    length: 20,
+    length: 5,
     z_rot: 0,
     y_rot: 0,
     XZLength: 0,
-    r_pos: {
-        x: 7,
-        y: 7,
-        z: 7
-    },
-    
+    r_pos: {x: 7, y: 7, z: 7},
     speed: 0.1,
-    curser_speed: 0.007
+    curser_speed: 0.007,
+    zoom_speed: 40
 };
 
 /*----LOCAL VARIABLES----*/
@@ -82,14 +57,11 @@ function keyDown(event) {
     if (event.keyCode == 17 || event.which == 17) {
         curser.reset = true;
     }
-    
     keyState[event.keyCode || event.which] = true;
 }
 function keyUp(event) {
     keyState[event.keyCode || event.which] = false;
 }
-
-
 
 function mouseMove() {
     if(keyState[17]) {
@@ -110,14 +82,13 @@ function mouseMove() {
             curser.x = event.clientX;
             curser.y = event.clientY;
             
-            camUpdate();
+            view.update();
         }
     }
 }
 
 function wheel() {
-    view.length += event.wheelDelta / -120;
-    camUpdate();
+    view.zoom(event.wheelDelta / -120);
 }
 /*----EVENTS----*/
 
@@ -149,8 +120,6 @@ function orbit_build(segments, body) {
         p_rad = c_bodies[focus].radius,
         apoapse = c_bodies[body].orbit.apoapse + p_rad,
         periapse = c_bodies[body].orbit.periapse + p_rad;
-    
-    
     
     var a = (apoapse + periapse) / 2,
         c = a - periapse,
@@ -239,12 +208,10 @@ function checkKeys() {
     } //right
     
     if (keyState[189]) {
-        view.length += 1;
-        camUpdate();
+        zoom(1);
     } //-
     if (keyState[187]) {
-        view.length -= 1;
-        camUpdate();
+        zoom(-1);
     } //=
     
     
@@ -278,7 +245,12 @@ function camUpdate() {
     view.r_pos.x = Math.sin(view.y_rot) * view.XZLength;
     view.r_pos.z = Math.cos(view.y_rot) * view.XZLength;
 }
-
+function zoom(length) {
+    view.length += length * view.zoom_speed;
+    if (view.length < 0) {view.length = 0}
+    
+    camUpdate();
+}
 function camSet() {
     /*
     camera.position = view.focus.position;

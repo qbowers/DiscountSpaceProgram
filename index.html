@@ -47,12 +47,18 @@
         });
         
         
+        socket.on('g_rules', function(s_rules){
+            g_rules = s_rules;
+        })
+        
         socket.on('world', function(s_bodies){
             for (var i = 0; i < s_bodies.length; i++) {
                 var body = s_bodies[i].name;
                 c_bodies[body] = new Body({
+                    
                     radius: s_bodies[i].radius,
                     material: eval(s_bodies[i].material)
+                    
                 });
                          
                 c_bodies[body].orbit = s_bodies[i].orbit;
