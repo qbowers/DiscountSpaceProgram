@@ -35,7 +35,7 @@ var view = {
     r_pos: {x: 7, y: 7, z: 7},
     speed: 0.1,
     curser_speed: 0.007,
-    zoom_speed: 40
+    zoom_speed: 1
 };
 
 /*----LOCAL VARIABLES----*/

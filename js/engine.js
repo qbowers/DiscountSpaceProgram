@@ -29,14 +29,20 @@ function Body(data) {
     this.radius_actual = data.radius / g_rules.au;
     
     this.material = data.material;
-    this.orbit = {
-        focus: data.orbit.focus,
-        apoapse: data.orbit.apoapse / g_rules.au,
-        periapse: data.orbit.periapse / g_rules.au,
-        actual: {
-            apoapse: data.orbit.apoapse,
-            periapse: data.orbit.periapse
-        }
+    
+    
+    if (data.orbit != 'none') {
+        this.orbit = {
+            focus: data.orbit.focus,
+            apoapse: data.orbit.apoapse / g_rules.au,
+            periapse: data.orbit.periapse / g_rules.au,
+            actual: {
+                apoapse: data.orbit.apoapse,
+                periapse: data.orbit.periapse
+            }
+        };
+    } else {
+        this.orbit = 'none';
     }
 }
 
