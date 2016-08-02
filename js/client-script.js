@@ -1,6 +1,6 @@
 /*----SETUP----*/
 var scene = new THREE.Scene(),
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.000001, 1000),
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.00000000001, 1000),
     loader = new THREE.STLLoader(),
     light = new THREE.PointLight( 0xffffff, 2, 100 ),
     renderer = new THREE.WebGLRenderer(/*{alpha: true}*/);
@@ -28,14 +28,14 @@ var curser = {
 
 var view = {
     focus: '',
-    length: 5,
+    length: 200,
     z_rot: 0,
     y_rot: 0,
     XZLength: 0,
     r_pos: {x: 7, y: 7, z: 7},
     speed: 0.1,
     curser_speed: 0.007,
-    zoom_speed: 1
+    zoom_speed: 10
 };
 
 /*----LOCAL VARIABLES----*/
@@ -82,13 +82,13 @@ function mouseMove() {
             curser.x = event.clientX;
             curser.y = event.clientY;
             
-            view.update();
+            camUpdate();
         }
     }
 }
 
 function wheel() {
-    view.zoom(event.wheelDelta / -120);
+    zoom(event.wheelDelta / -120);
 }
 /*----EVENTS----*/
 
@@ -112,14 +112,13 @@ function Body(data) {
     
     this.material = data.material;
     this.mesh = new THREE.Mesh(this.geometry, this.material);
-    scene.add(this.mesh);
 }
 
 function orbit_build(segments, body) {
     var focus = c_bodies[body].orbit.focus,
-        p_rad = c_bodies[focus].radius,
-        apoapse = c_bodies[body].orbit.apoapse + p_rad,
-        periapse = c_bodies[body].orbit.periapse + p_rad;
+        //p_rad = c_bodies[focus].radius,
+        apoapse = c_bodies[body].orbit.apoapse,
+        periapse = c_bodies[body].orbit.periapse;
     
     var a = (apoapse + periapse) / 2,
         c = a - periapse,
@@ -145,6 +144,7 @@ function orbit_build(segments, body) {
     geometry.vertices.push(new THREE.Vector3(pointList[0][0],0,pointList[0][1]));
     
     c_bodies[body].orbit.mesh = new THREE.Line(geometry, material);
+    
     p_set(c_bodies[body].orbit.mesh, c_bodies[focus].mesh.position);
     
     scene.add(c_bodies[body].orbit.mesh);
@@ -218,18 +218,18 @@ function checkKeys() {
     if (keyState[33]) {} //pgup
     if (keyState[34]) {} //pgdn
     
-    
-    
 }
 
 
 
 
 function camUpdate() {
-    if (view.z_rot > Math.PI / 2) {
-        view.z_rot = Math.PI / 2;
-    } else if (view.z_rot < Math.PI / -2) {
-        view.z_rot = Math.PI / -2;
+    var offset = 0.05
+    
+    if (view.z_rot > (Math.PI / 2) - offset) {
+        view.z_rot = (Math.PI / 2) - offset;
+    } else if (view.z_rot < (Math.PI / -2) + offset) {
+        view.z_rot = (Math.PI / -2) + offset;
     };
     
     if (view.y_rot > Math.PI * 2) {

@@ -30,6 +30,7 @@
         var socket = io(),
             hist = false;
         
+        
         socket.on('connect', function(){
             localId = '/#' + socket.id;
             console.log('local id: ' + localId);
@@ -39,40 +40,56 @@
             }
         });
         
+        socket.on('g_rules', function(s_rules){
+            g_rules = s_rules;
+        });
+        
+        
         socket.on('START', function(){
             view.focus = c_bodies['sol'].mesh;
             camUpdate();
             render();
             CREATE();
+            
         });
         
-        
-        socket.on('g_rules', function(s_rules){
-            g_rules = s_rules;
-        })
-        
         socket.on('world', function(s_bodies){
+            
+            
             for (var i = 0; i < s_bodies.length; i++) {
                 var body = s_bodies[i].name;
-                c_bodies[body] = new Body({
-                    
+                c_bodies[body] = {
                     radius: s_bodies[i].radius,
+                    geometry: new THREE.SphereGeometry(s_bodies[i].radius),
                     material: eval(s_bodies[i].material)
-                    
-                });
-                         
+                };
+                
+                c_bodies[body].mesh = new THREE.Mesh(c_bodies[body].geometry, c_bodies[body].material);
+                
+                
                 c_bodies[body].orbit = s_bodies[i].orbit;
                 
                 p_set(c_bodies[body].mesh, s_bodies[i].position);
                 r_set(c_bodies[body].mesh, s_bodies[i].position);
                 
+                
                 if (c_bodies[body].orbit != 'none') {
                     orbit_build(200, body);
                 }
-                console.log(body);
                 
-            };
+                
+            }
+            
+            scene.add(c_bodies['sol'].mesh);
+            
+            
+            var geometry = new THREE.SphereGeometry(c_bodies['sol'].radius * 2),
+                material = new THREE.MeshBasicMaterial({color: 0xff0000}),
+                sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
         });
+        
+        
         
         /*
         socket.on('addPlayer', function(data){
