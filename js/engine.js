@@ -36,6 +36,14 @@ function Body(data) {
         };
     } else {
         this.orbit = 'none';
+    this.orbit = {
+        focus: data.orbit.focus,
+        apoapse: data.orbit.apoapse / g_rules.au,
+        periapse: data.orbit.periapse / g_rules.au,
+        actual: {
+            apoapse: data.orbit.apoapse,
+            periapse: data.orbit.periapse
+        }
     }
 }
 
