@@ -1,131 +1,121 @@
 <!doctype HTML>
 <html>
-    <head>
-        <title>DSP || Pelican Lord</title>
-        
-        <!-- Bootstrap references -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <!-- Bootstrap references -->
-        
-        <link rel='stylesheet' href='css/style.css'>
-        
-    </head>
-    <body>
-    </body>
-    
-    <!-- LIB REFERENCES -->
-    <script src='/socket.io/socket.io.js'></script>
-    <script src='js/libs/three.min.js'></script>
-    <script src='js/libs/stl_loader.js'></script>
-    <!-- LIB REFERENCES -->
-    
-    
-    
-    <script src='js/client-script.js'></script>
-    
-    <script>
-        
-        var socket = io(),
-            hist = false;
-        
-        
-        socket.on('connect', function(){
-            localId = '/#' + socket.id;
-            console.log('local id: ' + localId);
-            if (hist === false) {
-                socket.emit('hist', hist);
-                hist = true;
-            }
-        });
-        
-        socket.on('g_rules', function(s_rules){
-            g_rules = s_rules;
-        });
-        
-        
-        socket.on('START', function(){
-            view.focus = c_bodies['sol'].mesh;
-            camUpdate();
-            render();
-            CREATE();
-            
-        });
-        
-        socket.on('world', function(s_bodies){
-            
-            
-            for (var i = 0; i < s_bodies.length; i++) {
-                var body = s_bodies[i].name;
-                c_bodies[body] = {
-                    radius: s_bodies[i].radius,
-                    geometry: new THREE.SphereGeometry(s_bodies[i].radius),
-                    material: eval(s_bodies[i].material)
-                };
-                
-                c_bodies[body].mesh = new THREE.Mesh(c_bodies[body].geometry, c_bodies[body].material);
-                
-                
-                c_bodies[body].orbit = s_bodies[i].orbit;
-                
-                p_set(c_bodies[body].mesh, s_bodies[i].position);
-                r_set(c_bodies[body].mesh, s_bodies[i].position);
-                
-                
-                if (c_bodies[body].orbit != 'none') {
-                    orbit_build(200, body);
-                }
-                
-                
-            }
-            
-            scene.add(c_bodies['sol'].mesh);
-            
-            
-            var geometry = new THREE.SphereGeometry(c_bodies['sol'].radius * 2),
-                material = new THREE.MeshBasicMaterial({color: 0xff0000}),
-                sphere = new THREE.Mesh(geometry, material);
-            scene.add(sphere);
-        });
-        
-        
-        
-        /*
-        socket.on('addPlayer', function(data){
-            var id = data.id,
-                geometry = eval(data.player.geometry),
-                material = eval(data.player.material),
-                newPlayer = {
-                    mesh: new THREE.Mesh(geometry, material),
-                    nickName: data.player.nickname
-                };
-            
-            console.log('connected: ' + id);
-            
-            players[id] = newPlayer;
-            
-            positionSet(players[id].mesh, data.player);
-            rotationSet(players[id].mesh, data.player);
-            
-            scene.add(players[id].mesh);
-        });
-        
-        
-        socket.on('updateData', function(data){
-            positionSet(players[data.id].mesh, data.player);
-            //rotationSet(players[data.id].mesh, data.player);
-            players[data.id].mesh.rotation.x = data.player.rotation.x;
-            players[data.id].mesh.rotation.y = data.player.rotation.y;
-            players[data.id].mesh.rotation.z = data.player.rotation.z;
-        });
-        
-        socket.on('removePlayer', function(data){
-            var id = data;
-            console.log('disconnected: ' + id);
-            scene.remove(players[id].mesh);
-            delete players[id];
-        });
-        */
-    </script>
+	<head>
+		<title>Discount Space Program</title>
+		
+		<!-- Bootstrap references -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<!-- Bootstrap references -->
+
+		<link rel='stylesheet' href='css/style.css'>
+
+	</head>
+	<body>
+	</body>
+
+	<!-- LIB REFERENCES -->
+	<script src='/socket.io/socket.io.js'></script>
+	<script src='js/libs/three.min.js'></script>
+	<script src='js/libs/stl_loader.js'></script>
+	<!-- LIB REFERENCES -->
+
+
+
+	<script src='js/client-script.js'></script>
+
+	<script>
+
+		var socket = io(),
+			hist = false;
+		socket.on('connect', function(){
+			localId = '/#' + socket.id;
+			console.log('local id: ' + localId);
+			if (hist === false) {
+				socket.emit('data-req');
+				hist = true;
+			}
+		});
+		socket.on('g_rules', function(s_rules){
+			g_rules = s_rules;
+		});
+		
+		/*----STARTUP----*/
+		socket.on('CREATE', function(s_bodies){
+			function OriginLine(data) {
+				this.geometry = new THREE.Geometry();
+				this.material = new THREE.LineBasicMaterial({color: data.color});
+				this.geometry.vertices.push(new THREE.Vector3(0,0,0));
+				this.geometry.vertices.push(new THREE.Vector3(data.point[0], data.point[1], data.point[2]));
+				this.mesh = new THREE.Line(this.geometry, this.material);
+				scene.add(this.mesh);
+			}
+			var line = {
+				x: new OriginLine({color: 0xff0000, point: [10,0,0]}),
+				y: new OriginLine({color: 0x00ff00, point: [0,10,0]}),
+				z: new OriginLine({color: 0x0000ff, point: [0,0,10]})
+			};
+			
+			
+			for (var i = 0; i < s_bodies.length; i++) {
+				var body = s_bodies[i].name;
+				c_bodies[body] = {
+					radius: s_bodies[i].radius,
+					material: s_bodies[i].material,
+					orbit: s_bodies[i].orbit,
+					position: s_bodies[i].position
+				};
+				if (c_bodies[body].orbit != 'none') {orbit_build(200, body)}
+			}
+			for (var i = 0; i < Object.keys(c_bodies).length; i++) {
+				var body = Object.keys(c_bodies)[i];
+				
+				c_bodies[body].material = eval(c_bodies[body].material);
+				c_bodies[body].geometry = new THREE.SphereGeometry(c_bodies[body].radius, 32, 32);
+				
+				c_bodies[body].mesh = new THREE.Mesh(c_bodies[body].geometry, c_bodies[body].material);
+				
+				
+				p_set(c_bodies[body].mesh, s_bodies[i].position);
+				r_set(c_bodies[body].mesh, s_bodies[i].position);
+				
+				scene.add(c_bodies[body].mesh);
+			}
+			
+			view.focus = c_bodies['sol'].mesh;
+			camUpdate();
+			render();
+		});
+		/*----STARTUP----*/
+		
+		
+		
+		/*
+		socket.on('addPlayer', function(data){
+			var id = data.id,
+				geometry = eval(data.player.geometry),
+				material = eval(data.player.material),
+				newPlayer = {
+					mesh: new THREE.Mesh(geometry, material),
+					nickName: data.player.nickname
+				};
+				
+			console.log('connected: ' + id);
+			
+			players[id] = newPlayer;
+			
+			positionSet(players[id].mesh, data.player);
+			rotationSet(players[id].mesh, data.player);
+			
+			scene.add(players[id].mesh);
+		});
+		socket.on('removePlayer', function(data){
+			var id = data;
+			console.log('disconnected: ' + id);
+			scene.remove(players[id].mesh);
+			delete players[id];
+		});
+		*/
+	</script>
 </html>
